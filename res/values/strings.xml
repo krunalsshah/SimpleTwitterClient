@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Simple Twitter Client</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_photos">Flickr Photos</string>
+    <string name="login_label">Log in</string>
+    <string name="title_activity_tweet_time_line">Twitter Time Line</string>
+    <string name="compose">Compose</string>
+    <string name="refresh">Refresh</string>
+    <string name="title_activity_compose_tweet">Compose Tweet</string>
+
+    <!-- Compose Tweet -->
+    <string name="compose_tweet">Compose Tweet</string>
+    <string name="cancel_compose_tweet">Cancel</string>
+    <string name="send_tweet">Send</string>
+    <string name="edit_text_hint_default">Compose a New Tweet</string>
+
+</resources>
