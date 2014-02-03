@@ -1,63 +1,71 @@
 package com.codepath.apps.simpletwitterapp.models;
 
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Tweet extends BaseModel{
+import android.util.Log;
+
+public class Tweet extends BaseModel {
+	public static final TreeMap<Long, Tweet> tweetMap = new TreeMap<Long, Tweet>();
+
 	private User user;
 
 	public User getUser() {
 		return user;
 	}
-	
-	public String getBody(){
+
+	public String getBody() {
 		return getString("text");
 	}
-	
-	public long getId(){
+
+	public long getId() {
 		return getLong("id");
 	}
-	
-	public boolean isFavorited(){
+
+	public boolean isFavorited() {
 		return getBoolean("favorited");
 	}
-	
-	public boolean isRetweeted(){
+
+	public boolean isRetweeted() {
 		return getBoolean("retweeted");
 	}
-	
-	public static Tweet fromJson(JSONObject jo){
+
+	public static Tweet fromJson(JSONObject jo) {
 		Tweet tweet = new Tweet();
-		try{
+		try {
 			tweet.jsonObject = jo;
 			tweet.user = User.fromJson(jo.getJSONObject("user"));
-		}catch(Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 		return tweet;
 	}
-	
-	public static ArrayList<Tweet> fromJson(JSONArray ja){
-		ArrayList<Tweet> tweets = new ArrayList<Tweet>(ja.length());
-		
-		for(int i =0 ; i < ja.length(); i++){
+
+	public static synchronized ArrayList<Tweet> fromJson(JSONArray ja) {
+		for (int i = 0; i < ja.length(); i++) {
 			JSONObject jo = null;
-			try{
+			try {
 				jo = ja.getJSONObject(i);
-			}catch(JSONException e){
+			} catch (JSONException e) {
 				e.printStackTrace();
 				continue;
 			}
 			Tweet tweet = Tweet.fromJson(jo);
-			if(tweet != null){
-				tweets.add(tweet);
+			
+			if (tweet != null && !tweetMap.containsKey(Long.valueOf(tweet.getId()))) {
+				tweetMap.put(tweet.getId(), tweet);
 			}
 		}
-		return tweets;
-		
+		for(Map.Entry<Long, Tweet> e : tweetMap.entrySet()){
+			Log.d("TWEET ID" , String.valueOf(e.getKey()));
+		}
+		return new ArrayList<Tweet>(tweetMap.values());
+
 	}
 }

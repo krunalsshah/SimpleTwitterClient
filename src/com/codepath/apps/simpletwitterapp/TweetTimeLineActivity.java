@@ -1,6 +1,7 @@
 package com.codepath.apps.simpletwitterapp;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,9 +23,9 @@ import eu.erikw.PullToRefreshListView.OnRefreshListener;
 public class TweetTimeLineActivity extends Activity {
 	public static final String TAG = TweetTimeLineActivity.class.getCanonicalName();
 	public static final int REQUEST_CODE = R.layout.activity_tweet_time_line;
-	private TweetsAdapter adapter;
+	private static TweetsAdapter adapter;
 	PullToRefreshListView lvTweets;
-	ArrayList<Tweet>  tweets;
+	static ArrayList<Tweet>  tweets;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +38,14 @@ public class TweetTimeLineActivity extends Activity {
 				super.onSuccess(jsonTweets);
 				tweets = Tweet.fromJson(jsonTweets);
 				adapter = new TweetsAdapter(getBaseContext(), tweets);
+				adapter.sort(new Comparator<Tweet>() {
+					@Override
+					public int compare(Tweet lhs, Tweet rhs) {
+						
+						return (rhs.getId() > lhs.getId())?1 : -1;
+					}
+        			
+				});
 				lvTweets.setAdapter(adapter);
 			}
 		});
@@ -48,29 +57,50 @@ public class TweetTimeLineActivity extends Activity {
                 // once the loading is done. This can be done from here or any
                 // place such as when the network request has completed successfully.
                 fetchTimelineAsync(-1);
-            }
-        });
-	}
-	
-	public void fetchTimelineAsync(int page) {
-		SimpleTwitterApp.getRestClient().getHomeTimeLineTweets(-1, new JsonHttpResponseHandler() {
-            public void onSuccess(JSONArray jsonTweets) {
-                // ...the data has come back, finish populating listview...
-                // Now we call onRefreshComplete to signify refresh has finished
-            	tweets.clear();
-            	adapter.clear();
-            	super.onSuccess(jsonTweets);
-				tweets = Tweet.fromJson(jsonTweets);
-				adapter.addAll(tweets);
-				adapter.notifyDataSetChanged();
                 lvTweets.onRefreshComplete();
             }
-
-            public void onFailure(Throwable e) {
-                Log.d("DEBUG", "Fetch timeline error: " + e.toString());
-            }
         });
-    }
+		
+		lvTweets.setOnScrollListener(new EndlessScrollListener() {
+	        @Override
+	        public void onLoadMore(int page, int totalItemsCount) {
+	                // Triggered only when new data needs to be appended to the list
+	                // Add whatever code is needed to append new items to your AdapterView
+	        	fetchTimelineAsync(adapter.getItem(adapter.getCount()-1).getId());	                // or customLoadMoreDataFromApi(totalItemsCount); 
+	        }
+	        });
+	}
+	
+	public void fetchTimelineAsync(final long page) {
+		SimpleTwitterApp.getRestClient().getHomeTimeLineTweets(page,
+				new JsonHttpResponseHandler() {
+					public void onSuccess(JSONArray jsonTweets) {
+						// ...the data has come back, finish populating
+						// listview...
+						// Now we call onRefreshComplete to signify refresh has
+						// finished
+						super.onSuccess(jsonTweets);
+						// fromJson method call guarantee's only unique tweets
+						// are returned else empty array is returned
+						tweets.retainAll(Tweet.fromJson(jsonTweets));
+						adapter.addAll(tweets);
+						adapter.sort(new Comparator<Tweet>() {
+							@Override
+							public int compare(Tweet lhs, Tweet rhs) {
+
+								return (rhs.getId() > lhs.getId()) ? 1 : -1;
+							}
+
+						});
+						adapter.notifyDataSetChanged();
+
+					}
+
+					public void onFailure(Throwable e) {
+						Log.d("DEBUG", "Fetch timeline error: " + e.toString());
+					}
+				});
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
