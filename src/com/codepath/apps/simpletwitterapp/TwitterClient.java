@@ -57,7 +57,7 @@ public class TwitterClient extends OAuthBaseClient {
 	    	params.put("max_id", Long.toString(maxId));
     	}
 		params.put("count", Integer.toString(20));
-		client.get(apiUrl, null, handler);
+		client.get(apiUrl, params, handler);
 	}
 
 	public void postTweet(String tweetText, AsyncHttpResponseHandler handler) {
