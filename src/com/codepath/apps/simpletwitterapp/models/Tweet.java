@@ -1,6 +1,7 @@
 package com.codepath.apps.simpletwitterapp.models;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -11,7 +12,14 @@ import org.json.JSONObject;
 import android.util.Log;
 
 public class Tweet extends BaseModel {
-	public static final TreeMap<Long, Tweet> tweetMap = new TreeMap<Long, Tweet>();
+	public static final TreeMap<Long, Tweet> tweetMap = new TreeMap<Long, Tweet>(new Comparator<Long>() {
+
+		@Override
+		public int compare(Long lhs, Long rhs) {
+			
+			return (rhs > lhs)?1 : -1;
+		}
+	});
 
 	private User user;
 
@@ -47,7 +55,7 @@ public class Tweet extends BaseModel {
 		return tweet;
 	}
 
-	public static synchronized ArrayList<Tweet> fromJson(JSONArray ja) {
+	public static ArrayList<Tweet> fromJson(JSONArray ja) {
 		for (int i = 0; i < ja.length(); i++) {
 			JSONObject jo = null;
 			try {
@@ -57,9 +65,8 @@ public class Tweet extends BaseModel {
 				continue;
 			}
 			Tweet tweet = Tweet.fromJson(jo);
-			
 			if (tweet != null && !tweetMap.containsKey(Long.valueOf(tweet.getId()))) {
-				tweetMap.put(tweet.getId(), tweet);
+				tweetMap.put(Long.valueOf(tweet.getId()), tweet);
 			}
 		}
 		for(Map.Entry<Long, Tweet> e : tweetMap.entrySet()){
