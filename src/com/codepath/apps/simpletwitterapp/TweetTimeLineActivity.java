@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.codepath.apps.simpletwitterapp.models.Tweet;
+import com.codepath.apps.simpletwitterapp.models.User;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import eu.erikw.PullToRefreshListView;
@@ -28,6 +29,7 @@ public class TweetTimeLineActivity extends Activity {
 	private TweetsAdapter adapter;
 	PullToRefreshListView lvTweets;
 	ArrayList<Tweet>  tweets;
+	User authUser;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +64,25 @@ public class TweetTimeLineActivity extends Activity {
 	        	fetchTimelineAsync(adapter.getItem(adapter.getCount()-1).getId() - 1, -1);
 	        }
 	        });
+		loadMyProfileInfo();
+	}
+	
+	public void loadMyProfileInfo() {
+		SimpleTwitterApp.getRestClient().getUserAccountSetting(
+				new JsonHttpResponseHandler() {
+					@Override
+					public void onSuccess(JSONObject json) {
+						authUser = User.fromJson(json);
+						getActionBar().setTitle("@"+authUser.getScreenName());
+						SimpleTwitterApp.getRestClient().getUserProfile(authUser.getScreenName(), new JsonHttpResponseHandler() {
+							@Override
+							public void onSuccess(JSONObject json) {
+								authUser = User.fromJson(json);
+							}
+						});
+					}
+					
+				});
 	}
 	
 	public void fetchTimelineAsync(final long maxId, final long sinceId) {
@@ -100,6 +121,8 @@ public class TweetTimeLineActivity extends Activity {
 	
 	public void onClickCompose(MenuItem mi){
 		 Intent i = new Intent(this, ComposeTweetActivity.class);
+		 i.putExtra("screenName", authUser.getScreenName());
+		 i.putExtra("userProfileImageUrl", authUser.getProfileImageUrl());
     	 startActivityForResult(i, REQUEST_CODE);
 	}
 	

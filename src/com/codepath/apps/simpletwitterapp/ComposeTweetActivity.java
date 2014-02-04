@@ -5,16 +5,22 @@ import org.json.JSONObject;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 public class ComposeTweetActivity extends Activity {
 	private ClearableEditText cetTweetMessage;
+	private TextView tvName ;
+	private ImageView ivProfileImage;
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	@Override
@@ -22,7 +28,13 @@ public class ComposeTweetActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_compose_tweet);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
+		String screenName = getIntent().getStringExtra("screenName");
+		String userProfileImageUrl = getIntent().getStringExtra("userProfileImageUrl");
 		initializeView();
+		tvName.setText("@" +screenName);
+		tvName.setTypeface(null, Typeface.BOLD);
+		ImageLoader.getInstance().displayImage(userProfileImageUrl, ivProfileImage);
+
 	}
 
 	@Override
@@ -46,6 +58,8 @@ public class ComposeTweetActivity extends Activity {
 
 	private void initializeView() {
 		cetTweetMessage = (ClearableEditText) findViewById(R.id.cetTweetMessage);
+		tvName = (TextView) findViewById(R.id.tvScreenNameCompose);
+		ivProfileImage = (ImageView) findViewById(R.id.ivProfileCompose);
 	}
 
 	public void onClickSendTweet(MenuItem mi) {

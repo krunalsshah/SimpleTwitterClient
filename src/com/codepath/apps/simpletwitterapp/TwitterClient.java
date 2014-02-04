@@ -46,9 +46,16 @@ public class TwitterClient extends OAuthBaseClient {
 				REST_CONSUMER_SECRET, REST_CALLBACK_URL);
 	}
 	
-	public void getUserProfile(AsyncHttpResponseHandler handler) {
-    	String url = getApiUrl("users/show.json");
+	public void getUserAccountSetting(AsyncHttpResponseHandler handler) {
+    	String url = getApiUrl("account/settings.json");
     	client.get(url, null, handler);
+    }
+	
+	public void getUserProfile(String screenName , AsyncHttpResponseHandler handler) {
+    	String url = getApiUrl("users/show.json");
+    	RequestParams params = new RequestParams();
+		params.put("screen_name", screenName);
+    	client.get(url, params, handler);
     }
 
 	public void getHomeTimeLineTweets(long maxId, long sinceId, AsyncHttpResponseHandler handler) {
