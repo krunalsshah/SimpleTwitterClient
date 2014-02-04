@@ -4,6 +4,7 @@ import org.scribe.builder.api.Api;
 import org.scribe.builder.api.TwitterApi;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.codepath.oauth.OAuthBaseClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -50,11 +51,17 @@ public class TwitterClient extends OAuthBaseClient {
     	client.get(url, null, handler);
     }
 
-	public void getHomeTimeLineTweets(long maxId, AsyncHttpResponseHandler handler) {
+	public void getHomeTimeLineTweets(long maxId, long sinceId, AsyncHttpResponseHandler handler) {
 		String apiUrl = getApiUrl("statuses/home_timeline.json");
     	RequestParams params = new RequestParams();
-		if (maxId != -1) {
+    	if(maxId > 0 && sinceId >0){
+    		Log.e(this.getClass().getSimpleName() , "Both maxId and sinceId cannot coexist");
+    		return;
+    	}
+		if (maxId > 0) {
 	    	params.put("max_id", Long.toString(maxId));
+    	} else if(sinceId > 0){
+    		params.put("since_id", Long.toString(sinceId));
     	}
 		params.put("count", Integer.toString(20));
 		client.get(apiUrl, params, handler);

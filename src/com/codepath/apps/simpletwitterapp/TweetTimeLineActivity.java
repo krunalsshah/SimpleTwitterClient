@@ -1,14 +1,15 @@
 package com.codepath.apps.simpletwitterapp;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -20,32 +21,24 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import eu.erikw.PullToRefreshListView;
 import eu.erikw.PullToRefreshListView.OnRefreshListener;
 
+@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class TweetTimeLineActivity extends Activity {
 	public static final String TAG = TweetTimeLineActivity.class.getCanonicalName();
 	public static final int REQUEST_CODE = R.layout.activity_tweet_time_line;
-	private static TweetsAdapter adapter;
+	private TweetsAdapter adapter;
 	PullToRefreshListView lvTweets;
-	static ArrayList<Tweet>  tweets;
+	ArrayList<Tweet>  tweets;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_tweet_time_line);
 		lvTweets = (PullToRefreshListView) findViewById(R.id.lvTweets);
-		SimpleTwitterApp.getRestClient().getHomeTimeLineTweets(-1, new JsonHttpResponseHandler(){
+		SimpleTwitterApp.getRestClient().getHomeTimeLineTweets(-1, -1, new JsonHttpResponseHandler(){
 			@Override
 			public void onSuccess(JSONArray jsonTweets) {
-				super.onSuccess(jsonTweets);
 				tweets = Tweet.fromJson(jsonTweets);
 				adapter = new TweetsAdapter(getBaseContext(), tweets);
-				adapter.sort(new Comparator<Tweet>() {
-					@Override
-					public int compare(Tweet lhs, Tweet rhs) {
-						
-						return (rhs.getId() > lhs.getId())?1 : -1;
-					}
-        			
-				});
 				lvTweets.setAdapter(adapter);
 			}
 		});
@@ -56,7 +49,7 @@ public class TweetTimeLineActivity extends Activity {
                 // Make sure you call listView.onRefreshComplete()
                 // once the loading is done. This can be done from here or any
                 // place such as when the network request has completed successfully.
-                fetchTimelineAsync(-1);
+                fetchTimelineAsync(-1, adapter.getItem(0).getId() + 1);
                 lvTweets.onRefreshComplete();
             }
         });
@@ -66,32 +59,28 @@ public class TweetTimeLineActivity extends Activity {
 	        public void onLoadMore(int page, int totalItemsCount) {
 	                // Triggered only when new data needs to be appended to the list
 	                // Add whatever code is needed to append new items to your AdapterView
-	        	fetchTimelineAsync(adapter.getItem(adapter.getCount()-1).getId());	                // or customLoadMoreDataFromApi(totalItemsCount); 
+	        	fetchTimelineAsync(adapter.getItem(adapter.getCount()-1).getId() - 1, -1);
 	        }
 	        });
 	}
 	
-	public void fetchTimelineAsync(final long page) {
-		SimpleTwitterApp.getRestClient().getHomeTimeLineTweets(page,
+	public void fetchTimelineAsync(final long maxId, final long sinceId) {
+		SimpleTwitterApp.getRestClient().getHomeTimeLineTweets(maxId,sinceId,
 				new JsonHttpResponseHandler() {
 					public void onSuccess(JSONArray jsonTweets) {
 						// ...the data has come back, finish populating
 						// listview...
 						// Now we call onRefreshComplete to signify refresh has
 						// finished
-						super.onSuccess(jsonTweets);
-						// fromJson method call guarantee's only unique tweets
-						// are returned else empty array is returned
-						tweets.retainAll(Tweet.fromJson(jsonTweets));
-						adapter.addAll(tweets);
-						adapter.sort(new Comparator<Tweet>() {
-							@Override
-							public int compare(Tweet lhs, Tweet rhs) {
-
-								return (rhs.getId() > lhs.getId()) ? 1 : -1;
+						tweets = Tweet.fromJson(jsonTweets);
+						if(maxId > 0){
+							adapter.addAll(tweets);
+						} 
+						if(sinceId > 0){
+							for(int i=0 ; i < tweets.size(); i++){
+								adapter.insert(tweets.get(i), i);
 							}
-
-						});
+						}
 						adapter.notifyDataSetChanged();
 
 					}

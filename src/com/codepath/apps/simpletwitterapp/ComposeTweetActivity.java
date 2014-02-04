@@ -2,8 +2,10 @@ package com.codepath.apps.simpletwitterapp;
 
 import org.json.JSONObject;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,10 +16,12 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 public class ComposeTweetActivity extends Activity {
 	private ClearableEditText cetTweetMessage;
 
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_compose_tweet);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 		initializeView();
 	}
 
@@ -26,6 +30,18 @@ public class ComposeTweetActivity extends Activity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.compose_tweet, menu);
 		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    switch (item.getItemId()) {
+	    // Respond to the action bar's Up/Home button
+	    case android.R.id.home:
+	    	setResult(RESULT_CANCELED, null);
+			finish();
+	        return true;
+	    }
+	    return super.onOptionsItemSelected(item);
 	}
 
 	private void initializeView() {
@@ -53,11 +69,6 @@ public class ComposeTweetActivity extends Activity {
 						finish();
 					}
 				});
-	}
-
-	public void onClickCancelTweet(MenuItem mi) {
-		setResult(RESULT_CANCELED, null);
-		finish();
 	}
 
 }

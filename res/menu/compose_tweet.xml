@@ -5,19 +5,10 @@
         android:orderInCategory="100"
         android:showAsAction="never"
         android:title="@string/action_settings"/>
-    
-    <item
-        android:id="@+id/cancel_tweet"
-        android:icon="@drawable/ic_action_left"
-        android:orderInCategory="100"
-        android:showAsAction="ifRoom"
-        android:title="@string/cancel_compose_tweet"
-        android:onClick="onClickCancelTweet"/>
-    
-
+  
     <item
         android:id="@+id/send_tweet"
-        android:icon="@drawable/ic_action_right"
+        android:icon="@drawable/ic_tweet_send"
         android:orderInCategory="100"
         android:showAsAction="ifRoom"
         android:title="@string/send_tweet"
