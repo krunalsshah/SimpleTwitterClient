@@ -84,13 +84,15 @@ public class TwitterMainActivity extends FragmentActivity implements
 
 	public void onProfileView(MenuItem mi) {
 		Intent i = new Intent(this, ProfileActivity.class);
-		i.putExtra("screenName", authUser.getScreenName());
-		i.putExtra("userProfileImageUrl", authUser.getProfileImageUrl());
-		i.putExtra("name", authUser.getName());
-		i.putExtra("followers", authUser.getFollowersCount());
-		i.putExtra("following", authUser.getFriendsCount());
-		i.putExtra("tag", authUser.getDescription());
-		startActivityForResult(i, REQUEST_CODE);
+		Bundle bundle = new Bundle();
+		bundle.putString("screenName", authUser.getScreenName());
+		bundle.putString("userProfileImageUrl", authUser.getProfileImageUrl());
+		bundle.putString("name", authUser.getName());
+		bundle.putString("tag", authUser.getDescription());
+		bundle.putInt("followers", authUser.getFollowersCount());
+		bundle.putInt("following", authUser.getFriendsCount());
+		i.putExtras(bundle);
+		startActivity(i);
 	}
 
 	@Override

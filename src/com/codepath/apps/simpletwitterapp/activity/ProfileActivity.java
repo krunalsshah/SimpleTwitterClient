@@ -16,30 +16,28 @@ public class ProfileActivity extends FragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_profile);
-		populateProfileHeader();
+		Bundle extras = getIntent().getExtras();
+		populateActionBar(extras.getString("screenName"));
+		populateUserProfile(extras);
+	}
+	
+	private void populateActionBar(String screenName){
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+		getActionBar().setTitle("@" + screenName);
 	}
 
-	private void populateProfileHeader() {
-		getActionBar().setDisplayHomeAsUpEnabled(true);
-		String screenName = getIntent().getStringExtra("screenName");
-		String userProfileImageUrl = getIntent().getStringExtra(
-				"userProfileImageUrl");
-		int followers = getIntent().getIntExtra("followers",0);
-		String name = getIntent().getStringExtra("name");
-		String tag = getIntent().getStringExtra("tag");
-		int following = getIntent().getIntExtra("following",0);
-		getActionBar().setTitle("@" + screenName);
+	private void populateUserProfile(Bundle bundle) {
 		ImageView ivProfileImage = (ImageView) findViewById(R.id.iv_profile_image);
 		TextView tvProfileName = (TextView) findViewById(R.id.tv_profile_name);
 		TextView tvProfileTag = (TextView) findViewById(R.id.tv_profile_tag);
 		TextView tvFollower = (TextView) findViewById(R.id.tv_profile_follower);
 		TextView tvFollowing = (TextView) findViewById(R.id.tv_profile_following);
-		ImageLoader.getInstance().displayImage(userProfileImageUrl,
+		ImageLoader.getInstance().displayImage(bundle.getString("userProfileImageUrl"),
 				ivProfileImage);
-		tvProfileName.setText(name);
-		tvFollower.setText(String.valueOf(followers) + " Followers");
-		tvFollowing.setText(String.valueOf(following) + " Followers");
-		tvProfileTag.setText(tag);
+		tvProfileName.setText(bundle.getString("name"));
+		tvFollower.setText(String.valueOf(bundle.getInt("followers") + " Followers"));
+		tvFollowing.setText(String.valueOf(bundle.getInt("following") + " Following"));
+		tvProfileTag.setText(bundle.getString("tag"));
 	}
 
 	@Override
