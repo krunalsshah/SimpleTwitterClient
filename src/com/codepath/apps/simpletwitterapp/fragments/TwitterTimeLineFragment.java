@@ -16,7 +16,7 @@ import eu.erikw.PullToRefreshListView;
 
 
 public class TwitterTimeLineFragment extends Fragment {
-	TweetsAdapter adapter;
+	static TweetsAdapter adapter;
 	PullToRefreshListView lvTweets;
 	ArrayList<Tweet>  tweets;
 
@@ -33,11 +33,11 @@ public class TwitterTimeLineFragment extends Fragment {
 		lvTweets = (PullToRefreshListView) getActivity().findViewById(R.id.lvTweets);		
 		tweets = new ArrayList<Tweet>();
 		adapter = new TweetsAdapter(getActivity(), tweets);
-		adapter.clear();
 		lvTweets.setAdapter(adapter);
+		adapter.clear();
 	}
 	
-	public TweetsAdapter getAdapter() {
+	public static TweetsAdapter getAdapter() {
 		return adapter;
 	}
 }

@@ -25,9 +25,10 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class TwitterMainActivity extends FragmentActivity implements TabListener{
 	public static final String TAG = TwitterMainActivity.class.getCanonicalName();
-	public static final int REQUEST_CODE = R.layout.activity_tweet_time_line; 
+	public static final int REQUEST_CODE = 9000; 
 	TweetsAdapter adapter;
 	User authUser;
+	Tab homeTab ;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +60,7 @@ public class TwitterMainActivity extends FragmentActivity implements TabListener
 		ActionBar actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		actionBar.setDisplayShowTitleEnabled(true);
-		Tab homeTab = actionBar.newTab().setText(R.string.tab_home).setTag(HomeTimeLineFragment.TAG).setIcon(R.drawable.ic_home).setTabListener(this);
+		homeTab = actionBar.newTab().setText(R.string.tab_home).setTag(HomeTimeLineFragment.TAG).setIcon(R.drawable.ic_home).setTabListener(this);
 		Tab mentionTab = actionBar.newTab().setText(R.string.tab_mention).setTag(MentionsTimeLineFragment.TAG).setIcon(R.drawable.ic_mention).setTabListener(this);
 		actionBar.addTab(homeTab, true);
 		actionBar.addTab(mentionTab);
@@ -89,8 +90,7 @@ public class TwitterMainActivity extends FragmentActivity implements TabListener
 				e.printStackTrace();
 				return;
 			}
-
-			adapter.insert(Tweet.fromJson(jsonTweet), 0);
+			HomeTimeLineFragment.getAdapter().insert(Tweet.fromJson(jsonTweet), 0);
 		}
 	}
 
@@ -115,4 +115,12 @@ public class TwitterMainActivity extends FragmentActivity implements TabListener
 	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
 		
 	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		getActionBar().selectTab(homeTab);
+	}
+	
+	
 }

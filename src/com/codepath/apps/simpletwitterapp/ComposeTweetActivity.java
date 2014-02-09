@@ -2,12 +2,10 @@ package com.codepath.apps.simpletwitterapp;
 
 import org.json.JSONObject;
 
-import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -17,12 +15,12 @@ import android.widget.Toast;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
-public class ComposeTweetActivity extends Activity {
+public class ComposeTweetActivity extends FragmentActivity {
 	private ClearableEditText cetTweetMessage;
 	private TextView tvName ;
 	private ImageView ivProfileImage;
 
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
