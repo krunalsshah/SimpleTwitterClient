@@ -18,5 +18,10 @@
     <string name="edit_text_hint_default">Compose a New Tweet</string>
     <string name="tab_home">Home</string>
     <string name="tab_mention">Mentions</string>
-    
+    <string name="title_activity_profile">ProfileActivity</string>
+    <string name="name">Name</string>
+    <string name="tag">Tag Line</string>
+    <string name="follower">Followers</string>
+    <string name="following">Following</string>
+
 </resources>

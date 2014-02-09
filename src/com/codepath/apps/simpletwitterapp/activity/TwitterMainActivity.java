@@ -1,4 +1,4 @@
-package com.codepath.apps.simpletwitterapp;
+package com.codepath.apps.simpletwitterapp.activity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,6 +16,9 @@ import android.support.v4.app.FragmentManager;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.codepath.apps.simpletwitterapp.R;
+import com.codepath.apps.simpletwitterapp.SimpleTwitterApp;
+import com.codepath.apps.simpletwitterapp.TweetsAdapter;
 import com.codepath.apps.simpletwitterapp.fragments.HomeTimeLineFragment;
 import com.codepath.apps.simpletwitterapp.fragments.MentionsTimeLineFragment;
 import com.codepath.apps.simpletwitterapp.models.Tweet;
@@ -23,12 +26,14 @@ import com.codepath.apps.simpletwitterapp.models.User;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-public class TwitterMainActivity extends FragmentActivity implements TabListener{
-	public static final String TAG = TwitterMainActivity.class.getCanonicalName();
-	public static final int REQUEST_CODE = 9000; 
+public class TwitterMainActivity extends FragmentActivity implements
+		TabListener {
+	public static final String TAG = TwitterMainActivity.class
+			.getCanonicalName();
+	public static final int REQUEST_CODE = 9000;
 	TweetsAdapter adapter;
-	User authUser;
-	Tab homeTab ;
+	static User authUser;
+	Tab homeTab;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -37,31 +42,28 @@ public class TwitterMainActivity extends FragmentActivity implements TabListener
 		setUpActionBar();
 		loadMyProfileInfo();
 	}
-	
+
 	public void loadMyProfileInfo() {
-		SimpleTwitterApp.getRestClient().getUserAccountSetting(
+		SimpleTwitterApp.getRestClient().getUserProfile(
 				new JsonHttpResponseHandler() {
 					@Override
-					public void onSuccess(JSONObject json) {
-						authUser = User.fromJson(json);
-						getActionBar().setTitle("@"+authUser.getScreenName());
-						SimpleTwitterApp.getRestClient().getUserProfile(authUser.getScreenName(), new JsonHttpResponseHandler() {
-							@Override
-							public void onSuccess(JSONObject json) {
-								authUser = User.fromJson(json);
-							}
-						});
+					public void onSuccess(JSONObject jo) {
+						authUser = User.fromJson(jo);
+						getActionBar().setTitle("@" + authUser.getScreenName());
 					}
-					
 				});
 	}
 	
-	private void setUpActionBar(){
+	private void setUpActionBar() {
 		ActionBar actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		actionBar.setDisplayShowTitleEnabled(true);
-		homeTab = actionBar.newTab().setText(R.string.tab_home).setTag(HomeTimeLineFragment.TAG).setIcon(R.drawable.ic_home).setTabListener(this);
-		Tab mentionTab = actionBar.newTab().setText(R.string.tab_mention).setTag(MentionsTimeLineFragment.TAG).setIcon(R.drawable.ic_mention).setTabListener(this);
+		homeTab = actionBar.newTab().setText(R.string.tab_home)
+				.setTag(HomeTimeLineFragment.TAG).setIcon(R.drawable.ic_home)
+				.setTabListener(this);
+		Tab mentionTab = actionBar.newTab().setText(R.string.tab_mention)
+				.setTag(MentionsTimeLineFragment.TAG)
+				.setIcon(R.drawable.ic_mention).setTabListener(this);
 		actionBar.addTab(homeTab, true);
 		actionBar.addTab(mentionTab);
 	}
@@ -72,14 +74,25 @@ public class TwitterMainActivity extends FragmentActivity implements TabListener
 		getMenuInflater().inflate(R.menu.tweet_time_line, menu);
 		return true;
 	}
-	
-	public void onClickCompose(MenuItem mi){
-		 Intent i = new Intent(this, ComposeTweetActivity.class);
-		 i.putExtra("screenName", authUser.getScreenName());
-		 i.putExtra("userProfileImageUrl", authUser.getProfileImageUrl());
-    	 startActivityForResult(i, REQUEST_CODE);
+
+	public void onClickCompose(MenuItem mi) {
+		Intent i = new Intent(this, ComposeTweetActivity.class);
+		i.putExtra("screenName", authUser.getScreenName());
+		i.putExtra("userProfileImageUrl", authUser.getProfileImageUrl());
+		startActivityForResult(i, REQUEST_CODE);
 	}
-	
+
+	public void onProfileView(MenuItem mi) {
+		Intent i = new Intent(this, ProfileActivity.class);
+		i.putExtra("screenName", authUser.getScreenName());
+		i.putExtra("userProfileImageUrl", authUser.getProfileImageUrl());
+		i.putExtra("name", authUser.getName());
+		i.putExtra("followers", authUser.getFollowersCount());
+		i.putExtra("following", authUser.getFriendsCount());
+		i.putExtra("tag", authUser.getDescription());
+		startActivityForResult(i, REQUEST_CODE);
+	}
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent i) {
 		if (resultCode == RESULT_OK) {
@@ -90,22 +103,23 @@ public class TwitterMainActivity extends FragmentActivity implements TabListener
 				e.printStackTrace();
 				return;
 			}
-			HomeTimeLineFragment.getAdapter().insert(Tweet.fromJson(jsonTweet), 0);
+			HomeTimeLineFragment.getAdapter().insert(Tweet.fromJson(jsonTweet),
+					0);
 		}
 	}
 
 	@Override
 	public void onTabReselected(Tab tab, FragmentTransaction ft) {
-		
+
 	}
 
 	@Override
 	public void onTabSelected(Tab tab, FragmentTransaction ft) {
 		FragmentManager fm = getSupportFragmentManager();
 		android.support.v4.app.FragmentTransaction fts = fm.beginTransaction();
-		if(tab.getTag() == HomeTimeLineFragment.TAG){
+		if (tab.getTag() == HomeTimeLineFragment.TAG) {
 			fts.replace(R.id.frame_container, new HomeTimeLineFragment());
-		}else{
+		} else {
 			fts.replace(R.id.frame_container, new MentionsTimeLineFragment());
 		}
 		fts.commit();
@@ -113,7 +127,7 @@ public class TwitterMainActivity extends FragmentActivity implements TabListener
 
 	@Override
 	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
-		
+
 	}
 
 	@Override
@@ -121,6 +135,5 @@ public class TwitterMainActivity extends FragmentActivity implements TabListener
 		super.onResume();
 		getActionBar().selectTab(homeTab);
 	}
-	
-	
+
 }

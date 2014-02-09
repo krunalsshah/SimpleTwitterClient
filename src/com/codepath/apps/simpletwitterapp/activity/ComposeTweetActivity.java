@@ -1,4 +1,4 @@
-package com.codepath.apps.simpletwitterapp;
+package com.codepath.apps.simpletwitterapp.activity;
 
 import org.json.JSONObject;
 
@@ -12,6 +12,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.codepath.apps.simpletwitterapp.ClearableEditText;
+import com.codepath.apps.simpletwitterapp.R;
+import com.codepath.apps.simpletwitterapp.SimpleTwitterApp;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.nostra13.universalimageloader.core.ImageLoader;
 

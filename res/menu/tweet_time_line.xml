@@ -13,5 +13,13 @@
         android:showAsAction="ifRoom"
         android:title="@string/compose"
         android:onClick="onClickCompose"/>
+    
+    <item
+        android:id="@+id/profile"
+        android:icon="@drawable/ic_action_profile"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:title="@string/compose"
+        android:onClick="onProfileView"/>
 
 </menu>
