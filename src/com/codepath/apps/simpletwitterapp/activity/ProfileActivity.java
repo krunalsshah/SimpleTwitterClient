@@ -2,12 +2,14 @@ package com.codepath.apps.simpletwitterapp.activity;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.codepath.apps.simpletwitterapp.R;
+import com.codepath.apps.simpletwitterapp.fragments.UserTimeLineFragment;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 public class ProfileActivity extends FragmentActivity {
@@ -17,13 +19,14 @@ public class ProfileActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_profile);
 		Bundle extras = getIntent().getExtras();
-		populateActionBar(extras.getString("screenName"));
 		populateUserProfile(extras);
+		populateActionBar(extras.getString("screenName"));
 	}
 	
 	private void populateActionBar(String screenName){
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		getActionBar().setTitle("@" + screenName);
+		addFragmentToView(screenName);
 	}
 
 	private void populateUserProfile(Bundle bundle) {
@@ -57,6 +60,13 @@ public class ProfileActivity extends FragmentActivity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.profile, menu);
 		return true;
+	}
+	
+	public  void addFragmentToView(String screenName){
+		FragmentManager fm = getSupportFragmentManager();
+		android.support.v4.app.FragmentTransaction fts = fm.beginTransaction();
+		fts.replace(R.id.fragment_container, UserTimeLineFragment.newInstance(screenName));
+		fts.commit();
 	}
 
 }

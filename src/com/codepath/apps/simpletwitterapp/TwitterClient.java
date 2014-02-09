@@ -4,6 +4,7 @@ import org.scribe.builder.api.Api;
 import org.scribe.builder.api.TwitterApi;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.codepath.oauth.OAuthBaseClient;
@@ -58,9 +59,14 @@ public class TwitterClient extends OAuthBaseClient {
     	client.get(url, params, handler);
     }
 	
-	public void getUserTimeLine(AsyncHttpResponseHandler handler) {
+	public void getUserTimeLine(String screenName ,AsyncHttpResponseHandler handler) {
     	String url = getApiUrl("statuses/user_timeline.json");
-    	client.get(url, null, handler);
+    	RequestParams params = null; 
+    	if(!TextUtils.isEmpty(screenName)){
+    		params = new RequestParams();
+    		params.put("screen_name", screenName);
+    	}
+    	client.get(url, (params == null)? null : params, handler);
     }
 
 	public void getHomeTimeLineTweets(long maxId, long sinceId, AsyncHttpResponseHandler handler) {

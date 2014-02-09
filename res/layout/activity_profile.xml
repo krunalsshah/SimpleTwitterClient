@@ -62,14 +62,13 @@
             android:id="@+id/tv_profile_following"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
             android:text="@string/following"
-            android:textSize="16sp" 
-            android:layout_marginLeft="30dp"/>
+            android:textSize="16sp" />
     </LinearLayout>
 
-    <fragment
-        android:id="@+id/fragment_user_timeline"
-        android:name="com.codepath.apps.simpletwitterapp.fragments.UserTimeLineFragment"
+    <FrameLayout
+        android:id="@+id/fragment_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/llCounts"
