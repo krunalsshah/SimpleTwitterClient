@@ -16,5 +16,7 @@
     <string name="cancel_compose_tweet">Cancel</string>
     <string name="send_tweet">Send</string>
     <string name="edit_text_hint_default">Compose a New Tweet</string>
-
+    <string name="tab_home">Home</string>
+    <string name="tab_mention">Mentions</string>
+    
 </resources>
