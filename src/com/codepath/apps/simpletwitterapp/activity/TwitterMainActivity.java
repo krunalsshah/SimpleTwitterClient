@@ -36,6 +36,7 @@ public class TwitterMainActivity extends FragmentActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		//Trying Action progress Bar
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 		// Request the feature before setting content view

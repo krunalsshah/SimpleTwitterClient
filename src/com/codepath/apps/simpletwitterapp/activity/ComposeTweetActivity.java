@@ -32,6 +32,7 @@ public class ComposeTweetActivity extends FragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_compose_tweet);
+		//Trying Progress Bar
 		pbCompose = (ProgressBar) findViewById(R.id.pbCompose);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		getActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.ab_solid_example));

@@ -20,24 +20,29 @@ public class UserTimeLineFragment extends TwitterTimeLineFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		showProgressBar();
-		getUserTimeLineViaRest(getArguments().getString("screen_name"));
-		hideProgressBar();
 	}
 
-	public static void getUserTimeLineViaRest(String screenName) {
-		SimpleTwitterApp.getRestClient().getUserTimeLine(screenName,
+	@Override
+	public void onResume() {
+		super.onResume();
+		showProgressBar();
+		SimpleTwitterApp.getRestClient().getUserTimeLine(
+				getArguments().getString("screen_name"),
 				new JsonHttpResponseHandler() {
 					@Override
 					public void onSuccess(JSONArray jo) {
 						ArrayList<Tweet> tweets = Tweet.fromJson(jo);
 						getAdapter().addAll(tweets);
+						hideProgressBar();
+
 					}
 
 					public void onFailure(Throwable e) {
 						Log.d("DEBUG", "Fetch timeline error: " + e.toString());
+						hideProgressBar();
 					}
 				});
+
 	}
 
 	public static UserTimeLineFragment newInstance(String screenName) {
