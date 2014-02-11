@@ -18,22 +18,11 @@ public class HomeTimeLineFragment extends TwitterTimeLineFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		SimpleTwitterApp.getRestClient().getHomeTimeLineTweets(-1, -1,
-				new JsonHttpResponseHandler() {
-					@Override
-					public void onSuccess(JSONArray jsonTweets) {
-						tweets = Tweet.fromJson(jsonTweets);
-						getAdapter().addAll(tweets);
-					}
-					public void onFailure(Throwable e) {
-						Log.d("DEBUG", "Fetch timeline error: " + e.toString());
-					}
-				});
 	}
-
+	
 	@Override
-	public void onResume() {
-		super.onResume();
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
 		lvTweets.setOnRefreshListener(new OnRefreshListener() {
 			@Override
 			public void onRefresh() {
@@ -61,7 +50,28 @@ public class HomeTimeLineFragment extends TwitterTimeLineFragment {
 		});
 	}
 
+	@Override
+	public void onResume() {
+		super.onResume();
+		showProgressBar();
+		SimpleTwitterApp.getRestClient().getHomeTimeLineTweets(-1, -1,
+				new JsonHttpResponseHandler() {
+					@Override
+					public void onSuccess(JSONArray jsonTweets) {
+						tweets = Tweet.fromJson(jsonTweets);
+						getAdapter().addAll(tweets);
+						hideProgressBar();
+					}
+					public void onFailure(Throwable e) {
+						Log.d("DEBUG", "Fetch timeline error: " + e.toString());
+						hideProgressBar();
+					}
+				});
+		
+	}
+
 	public void fetchTimelineAsync(final long maxId, final long sinceId) {
+		showProgressBar();
 		SimpleTwitterApp.getRestClient().getHomeTimeLineTweets(maxId, sinceId,
 				new JsonHttpResponseHandler() {
 					public void onSuccess(JSONArray jsonTweets) {
@@ -79,11 +89,12 @@ public class HomeTimeLineFragment extends TwitterTimeLineFragment {
 							}
 						}
 						adapter.notifyDataSetChanged();
-
+						hideProgressBar();
 					}
 
 					public void onFailure(Throwable e) {
 						Log.d("DEBUG", "Fetch timeline error: " + e.toString());
+						hideProgressBar();
 					}
 				});
 	}

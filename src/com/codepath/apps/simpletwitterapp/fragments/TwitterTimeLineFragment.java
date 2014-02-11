@@ -19,25 +19,40 @@ public class TwitterTimeLineFragment extends Fragment {
 	static TweetsAdapter adapter;
 	PullToRefreshListView lvTweets;
 	ArrayList<Tweet>  tweets;
+	
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		tweets = new ArrayList<Tweet>();
+		adapter = new TweetsAdapter(getActivity(), tweets);
+	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.fragment_tweet_list, container,false);
+		View v = inflater.inflate(R.layout.fragment_tweet_list, container,false);
+		lvTweets = (PullToRefreshListView) v.findViewById(R.id.lvTweets);		
+		lvTweets.setAdapter(adapter);
+		adapter.clear();
+		return v;
 	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onActivityCreated(savedInstanceState);
-		lvTweets = (PullToRefreshListView) getActivity().findViewById(R.id.lvTweets);		
-		tweets = new ArrayList<Tweet>();
-		adapter = new TweetsAdapter(getActivity(), tweets);
-		lvTweets.setAdapter(adapter);
-		adapter.clear();
 	}
 	
 	public static TweetsAdapter getAdapter() {
 		return adapter;
 	}
+	
+	// Should be called manually when an async task has started
+    public void showProgressBar() {
+        getActivity().setProgressBarIndeterminateVisibility(true); 
+    }
+
+    // Should be called when an async task has finished
+    public void hideProgressBar() {
+        getActivity().setProgressBarIndeterminateVisibility(false); 
+    }
 }

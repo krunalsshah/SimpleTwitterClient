@@ -20,7 +20,9 @@ public class UserTimeLineFragment extends TwitterTimeLineFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		showProgressBar();
 		getUserTimeLineViaRest(getArguments().getString("screen_name"));
+		hideProgressBar();
 	}
 
 	public static void getUserTimeLineViaRest(String screenName) {

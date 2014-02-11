@@ -2,6 +2,7 @@ package com.codepath.apps.simpletwitterapp.activity;
 
 import org.json.JSONObject;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,17 +20,22 @@ import com.codepath.apps.simpletwitterapp.SimpleTwitterApp;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+@SuppressLint("NewApi")
+//TODO refactor this activity to use fragment
 public class ComposeTweetActivity extends FragmentActivity {
 	private ClearableEditText cetTweetMessage;
 	private TextView tvName ;
 	private ImageView ivProfileImage;
-
+	private ProgressBar pbCompose;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_compose_tweet);
+		pbCompose = (ProgressBar) findViewById(R.id.pbCompose);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
+		getActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.ab_solid_example));
+		getActionBar().setStackedBackgroundDrawable(getResources().getDrawable(R.drawable.ab_stacked_solid_example));
 		String screenName = getIntent().getStringExtra("screenName");
 		String userProfileImageUrl = getIntent().getStringExtra("userProfileImageUrl");
 		initializeView();
@@ -74,6 +81,7 @@ public class ComposeTweetActivity extends FragmentActivity {
 					Toast.LENGTH_LONG).show();
 			return;
 		}
+		showProgressBar();
 		SimpleTwitterApp.getRestClient().postTweet(tweetText,
 				new JsonHttpResponseHandler() {
 					@Override
@@ -82,8 +90,17 @@ public class ComposeTweetActivity extends FragmentActivity {
 						i.putExtra("jsonTweet", jsonTweet.toString());
 						setResult(RESULT_OK, i);
 						finish();
+						disableProgressBar();
 					}
 				});
+	}
+	
+	public void showProgressBar(){
+		pbCompose.setVisibility(ProgressBar.VISIBLE);
+	}
+	
+	public void disableProgressBar(){
+		pbCompose.setVisibility(ProgressBar.INVISIBLE);
 	}
 
 }
